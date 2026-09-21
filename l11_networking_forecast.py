@@ -92,11 +92,15 @@ def process_bom_data(directory):
                         df = pd.read_excel(file_path, sheet_name=tab_name, header=header_row)
                         
                         # Extract relevant columns
-                        if 'Model/PN' in df.columns and 'Units' in df.columns and 'Networking' in df.columns:
+                        if 'Model/PN' in df.columns and 'Units' in df.columns:
                             # Add source file and tab information
                             df['Source File'] = file_name
                             df['Source Tab'] = tab_name
                             df['File Modified'] = file_modified
+                            
+                            # Add Networking column if it doesn't exist
+                            if 'Networking' not in df.columns:
+                                df['Networking'] = 'N/A'
                             
                             # Select only the columns we need
                             relevant_data = df[['Networking', 'Model/PN', 'Units', 'Source File', 'Source Tab', 'File Modified']].copy()
@@ -165,11 +169,25 @@ with col1:
         excel_files = list(dir_path.glob("*.xlsx"))
         st.success(f"Found {len(excel_files)} Excel files")
         
+        # Track processed files for new file detection
+        if 'processed_files' not in st.session_state:
+            st.session_state['processed_files'] = set()
+        
+        current_files = {file.name for file in excel_files}
+        new_files = current_files - st.session_state['processed_files']
+        
+        if new_files:
+            st.success(f"🆕 {len(new_files)} new file(s) detected: {', '.join(new_files)}")
+        
         # Show file modification times to detect new files
         with st.expander("View Files & Status"):
             for file in excel_files:
                 mod_time = datetime.fromtimestamp(file.stat().st_mtime)
-                st.write(f"📄 {file.name}")
+                is_new = file.name in new_files
+                if is_new:
+                    st.markdown(f"🆕 **{file.name}**")
+                else:
+                    st.write(f"📄 {file.name}")
                 st.caption(f"Modified: {mod_time.strftime('%Y-%m-%d %H:%M:%S')}")
     else:
         st.error("Directory not found!")
@@ -187,6 +205,13 @@ with col2:
                 st.session_state['files_data'] = files_df
                 st.session_state['raw_data'] = summary_df  # For filtering
                 st.session_state['last_refresh'] = time.time()
+                
+                # Update processed files set
+                dir_path = Path(excel_directory)
+                if dir_path.exists():
+                    current_files = {file.name for file in dir_path.glob("*.xlsx")}
+                    st.session_state['processed_files'] = current_files
+                
                 st.success(f"✅ Loaded {len(summary_df)} unique items")
 
 with col3:
@@ -215,6 +240,13 @@ if auto_refresh and 'last_refresh' in st.session_state:
                 st.session_state['files_data'] = files_df
                 st.session_state['raw_data'] = summary_df
                 st.session_state['last_refresh'] = time.time()
+                
+                # Update processed files set
+                dir_path = Path(excel_directory)
+                if dir_path.exists():
+                    current_files = {file.name for file in dir_path.glob("*.xlsx")}
+                    st.session_state['processed_files'] = current_files
+                
                 st.rerun()
 
 # Key Metrics
