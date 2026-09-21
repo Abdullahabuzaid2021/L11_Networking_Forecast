@@ -146,6 +146,10 @@ def process_bom_data(directory):
             # Reorder columns: Networking, Model/PN, Units
             summary_df = summary_df[['Networking', 'Model/PN', 'Units']]
             
+            # Ensure proper data types
+            summary_df['Model/PN'] = summary_df['Model/PN'].astype(str)
+            summary_df['Networking'] = summary_df['Networking'].astype(str)
+            
             # Create file info dataframe
             files_df = pd.DataFrame(file_info)
             
@@ -265,6 +269,124 @@ with col3:
 
 with col4:
     st.metric("Total Tabs", len(files_df) if files_df is not None else 0)
+
+# Quantity Total Table
+st.header("📊 Quantity Total Table")
+
+# Create tabs for different views of the quantity data
+tab1, tab2, tab3 = st.tabs(["📋 Complete Summary", "📁 By Source File", "📈 Quantity Analysis"])
+
+with tab1:
+    st.subheader("Complete BOM Summary by Item")
+    
+    # Add some summary statistics
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Unique Items", len(summary_df))
+    with col2:
+        st.metric("Total Quantity", f"{summary_df['Units'].sum():,.0f}")
+    with col3:
+        st.metric("Avg Quantity per Item", f"{summary_df['Units'].mean():,.0f}")
+    
+    # Display the complete summary table
+    st.dataframe(
+        summary_df.style.format({
+            'Units': '{:,.0f}'
+        }).background_gradient(cmap='Blues', subset=['Units']),
+        use_container_width=True,
+        height=500
+    )
+
+with tab2:
+    st.subheader("Quantity Breakdown by Source File")
+    
+    if files_df is not None and len(files_df) > 0:
+        # Display file information with quantities
+        file_summary = files_df.copy()
+        file_summary['Modified'] = file_summary['Modified'].dt.strftime('%Y-%m-%d %H:%M:%S')
+        
+        st.dataframe(
+            file_summary.style.format({
+                'Items': '{:,.0f}'
+            }).background_gradient(cmap='Greens', subset=['Items']),
+            use_container_width=True,
+            height=300
+        )
+        
+        # Create a bar chart showing items per file
+        fig_files = px.bar(
+            files_df,
+            x='File',
+            y='Items',
+            title='Number of Items per Source File',
+            color='Items',
+            color_continuous_scale='Viridis'
+        )
+        fig_files.update_xaxes(tickangle=45)
+        st.plotly_chart(fig_files, use_container_width=True)
+    else:
+        st.info("No file information available")
+
+with tab3:
+    st.subheader("Quantity Analysis")
+    
+    # Create quantity ranges
+    summary_df_copy = summary_df.copy()
+    summary_df_copy['Quantity Range'] = pd.cut(
+        summary_df_copy['Units'],
+        bins=[0, 100, 1000, 10000, float('inf')],
+        labels=['1-100', '101-1,000', '1,001-10,000', '10,000+']
+    )
+    
+    # Convert quantity range to string for display
+    summary_df_copy['Quantity Range'] = summary_df_copy['Quantity Range'].astype(str)
+    
+    # Quantity range distribution
+    range_counts = summary_df_copy['Quantity Range'].value_counts().sort_index()
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Quantity Range Distribution")
+        fig_range = px.bar(
+            x=range_counts.index,
+            y=range_counts.values,
+            title='Items by Quantity Range',
+            color=range_counts.values,
+            color_continuous_scale='Plasma'
+        )
+        fig_range.update_xaxes(title='Quantity Range')
+        fig_range.update_yaxes(title='Number of Items')
+        st.plotly_chart(fig_range, use_container_width=True)
+    
+    with col2:
+        st.subheader("Top 10 Items by Quantity")
+        top_10 = summary_df.head(10)
+        
+        fig_top10 = px.bar(
+            top_10,
+            x='Units',
+            y='Model/PN',
+            orientation='h',
+            title='Top 10 Items by Quantity',
+            color='Units',
+            color_continuous_scale='Inferno'
+        )
+        fig_top10.update_layout(height=400)
+        st.plotly_chart(fig_top10, use_container_width=True)
+    
+    # Quantity statistics
+    st.subheader("Quantity Statistics")
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Min Quantity", f"{summary_df['Units'].min():,.0f}")
+    with col2:
+        st.metric("Max Quantity", f"{summary_df['Units'].max():,.0f}")
+    with col3:
+        st.metric("Median Quantity", f"{summary_df['Units'].median():,.0f}")
+    with col4:
+        st.metric("Std Dev", f"{summary_df['Units'].std():,.0f}")
 
 # Query Section
 st.header("🔍 Query Data")
