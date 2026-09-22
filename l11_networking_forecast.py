@@ -115,6 +115,20 @@ def process_bom_data(directory):
                             relevant_data = relevant_data[relevant_data['Units'].notna()]
                             relevant_data = relevant_data[relevant_data['Units'] != 0]
                             
+                            # Filter out summary/pricing sections by detecting patterns
+                            # Look for rows that might be summary sections rather than item data
+                            summary_keywords = ['Total Data Hall', 'Total Core', 'Total Horizon', 'Data Hall E-W', 'Data Hall N-S', 'Data Hall OOB', 'Core E-W', 'Core N-S', 'Core OOB', 'Rack Integration']
+                            
+                            # Filter out rows where Model/PN exactly matches summary section names
+                            relevant_data = relevant_data[
+                                ~relevant_data['Model/PN'].isin(summary_keywords)
+                            ]
+                            
+                            # Filter out rows where Model/PN starts with "Total" (but not "Total" as part of a real model number)
+                            relevant_data = relevant_data[
+                                ~relevant_data['Model/PN'].str.startswith('Total ', na=False)
+                            ]
+                            
                             all_data.append(relevant_data)
                             file_info.append({
                                 'File': file_name,
