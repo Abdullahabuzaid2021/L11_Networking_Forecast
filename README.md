@@ -6,6 +6,10 @@ A Streamlit-based dashboard for aggregating and analyzing L11 networking BOM dat
 
 **Dashboard URL**: http://localhost:8501 (when running locally)
 
+**Dell Internal Network URLs** (for team sharing):
+- **Network URL**: http://10.137.51.248:8501 (within Dell network)
+- **External URL**: http://143.166.192.16:8501 (if accessible)
+
 **GitHub Repository**: https://github.com/Abdullahabuzaid2021/L11_Networking_Forecast
 
 **SharePoint Data Source**: [Hackathon - L11 forecasting](https://dell.sharepoint.com/:f:/r/sites/NetworkingL11RackPlanning/Shared%20Documents/General/Hackathon%20-%20L11%20forecasting?d=wb9ae5c4571d84bec94d375ef7ea58856&csf=1&web=1&e=KNnpRl)
@@ -121,9 +125,20 @@ streamlit run l11_networking_forecast.py
 
 ## Dashboard Access
 
+### 🌐 Dell Internal Sharing (Recommended for Team Access)
+The dashboard can be shared with other Dell members via the network URLs:
+- **Network URL**: http://10.137.51.248:8501 (within Dell network) - **Primary for team sharing**
+- **External URL**: http://143.166.192.16:8501 (if accessible) - **Alternative for broader access**
+
+**How to Share:**
+1. Run the dashboard on your machine: `streamlit run l11_networking_forecast.py`
+2. Share the Network URL (http://10.137.51.248:8501) with your team
+3. Team members can access it directly within the Dell network
+4. No additional server setup required
+
 ### Local Development
 When running locally, the dashboard is accessible at:
-- **Local URL**: http://localhost:8501
+- **Local URL**: http://localhost:8501 (only on your machine)
 - **Network URL**: http://10.137.51.248:8501 (within Dell network)
 - **External URL**: http://143.166.192.16:8501 (if accessible)
 
