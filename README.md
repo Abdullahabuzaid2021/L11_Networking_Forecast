@@ -2,6 +2,14 @@
 
 A Streamlit-based dashboard for aggregating and analyzing L11 networking BOM data from Excel files containing PnL SN6600 tabs.
 
+## 🚀 Quick Access
+
+**Dashboard URL**: http://localhost:8501 (when running locally)
+
+**GitHub Repository**: https://github.com/Abdullahabuzaid2021/L11_Networking_Forecast
+
+**SharePoint Data Source**: [Hackathon - L11 forecasting](https://dell.sharepoint.com/:f:/r/sites/NetworkingL11RackPlanning/Shared%20Documents/General/Hackathon%20-%20L11%20forecasting?d=wb9ae5c4571d84bec94d375ef7ea58856&csf=1&web=1&e=KNnpRl)
+
 ## Problem Statement
 
 The L11 networking team faces a significant challenge in aggregating Bill of Materials (BOM) data from multiple individual project files. Each project maintains its own Excel file with networking component data in PnL SN6600 tabs, making it difficult to:
@@ -111,13 +119,42 @@ pip install -r requirements.txt
 streamlit run l11_networking_forecast.py
 ```
 
+## Dashboard Access
+
+### Local Development
+When running locally, the dashboard is accessible at:
+- **Local URL**: http://localhost:8501
+- **Network URL**: http://10.137.51.248:8501 (within Dell network)
+- **External URL**: http://143.166.192.16:8501 (if accessible)
+
+### Deployment Options
+The dashboard can be deployed for team access through:
+
+**Streamlit Cloud** (Recommended for sharing):
+- Deploy via GitHub integration
+- Get a permanent URL like `https://l11-networking-forecast.streamlit.app`
+- Easy sharing with team members
+
+**Internal Server**:
+- Deploy on Dell internal servers
+- Configure for intranet access
+- Suitable for sensitive data
+
+### Quick Start
+1. Clone the repository
+2. Install dependencies: `pip install -r requirements.txt`
+3. Run the dashboard: `streamlit run l11_networking_forecast.py`
+4. Access at http://localhost:8501
+5. Click "Load/Refresh Data" to process the included sample files
+
 ## Configuration
 
-- **Default Directory**: `data/` (included in repository)
+- **Default Directory**: `data/` (included in repository with sample files)
 - **Alternative Directory**: `C:\Users\Abdullah_Abuzaid\OneDrive - Dell Technologies\Desktop\Hackathon exercise`
 - **SharePoint Location**: [Hackathon - L11 forecasting](https://dell.sharepoint.com/:f:/r/sites/NetworkingL11RackPlanning/Shared%20Documents/General/Hackathon%20-%20L11%20forecasting?d=wb9ae5c4571d84bec94d375ef7ea58856&csf=1&web=1&e=KNnpRl)
 - **Supported File Format**: Excel files (.xlsx) with tabs containing "PnL SN6600" in the name
 - **Required Columns**: Networking, Model/PN, Units
+- **Dashboard URL**: http://localhost:8501 (when running locally)
 
 ### Sample Data Included
 
@@ -196,3 +233,30 @@ The dashboard is designed to work with locally synced SharePoint folders. To use
 ## Support
 
 For issues or questions, contact the development team.
+
+## 📱 Dashboard Links
+
+### Local Access
+- **Primary URL**: http://localhost:8501
+- **Network URL**: http://10.137.51.248:8501 (Dell internal network)
+- **External URL**: http://143.166.192.16:8501 (if accessible)
+
+### Repository & Resources
+- **GitHub Repository**: https://github.com/Abdullahabuzaid2021/L11_Networking_Forecast
+- **SharePoint Data**: [Hackathon - L11 forecasting](https://dell.sharepoint.com/:f:/r/sites/NetworkingL11RackPlanning/Shared%20Documents/General/Hackathon%20-%20L11%20forecasting?d=wb9ae5c4571d84bec94d375ef7ea58856&csf=1&web=1&e=KNnpRl)
+
+### Quick Start Commands
+```bash
+# Clone the repository
+git clone https://github.com/Abdullahabuzaid2021/L11_Networking_Forecast.git
+cd L11_Networking_Forecast
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the dashboard
+streamlit run l11_networking_forecast.py
+
+# Access the dashboard
+# Open http://localhost:8501 in your browser
+```
