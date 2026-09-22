@@ -114,8 +114,19 @@ streamlit run l11_networking_forecast.py
 ## Configuration
 
 - **Default Directory**: `C:\Users\Abdullah_Abuzaid\OneDrive - Dell Technologies\Desktop\Hackathon exercise`
+- **SharePoint Location**: [Hackathon - L11 forecasting](https://dell.sharepoint.com/:f:/r/sites/NetworkingL11RackPlanning/Shared%20Documents/General/Hackathon%20-%20L11%20forecasting?d=wb9ae5c4571d84bec94d375ef7ea58856&csf=1&web=1&e=KNnpRl)
 - **Supported File Format**: Excel files (.xlsx) with tabs containing "PnL SN6600" in the name
 - **Required Columns**: Networking, Model/PN, Units
+
+### SharePoint Integration
+
+The dashboard is designed to work with locally synced SharePoint folders. To use the SharePoint location:
+
+1. **Sync SharePoint Folder**: Use OneDrive or SharePoint sync client to sync the folder locally
+2. **Use Local Path**: Configure the dashboard to use the local synced folder path
+3. **Automatic Updates**: Changes in SharePoint will sync to the local folder and be detected by the dashboard
+
+**Note**: Direct SharePoint API integration requires additional authentication setup. The current implementation uses local file system access for simplicity and security.
 
 ## Usage
 
