@@ -153,12 +153,17 @@ def process_bom_data(directory):
             # Create file info dataframe
             files_df = pd.DataFrame(file_info)
             
-            return summary_df, files_df, None
+            # Ensure proper data types for combined data
+            combined_df['Model/PN'] = combined_df['Model/PN'].astype(str)
+            combined_df['Networking'] = combined_df['Networking'].astype(str)
+            combined_df['Source File'] = combined_df['Source File'].astype(str)
+            
+            return summary_df, files_df, combined_df, None
         else:
-            return None, None, "No PnL SN6600 tabs found in any files"
+            return None, None, None, "No PnL SN6600 tabs found in any files"
             
     except Exception as e:
-        return None, None, f"Error processing data: {str(e)}"
+        return None, None, None, f"Error processing data: {str(e)}"
 
 # Main content area
 col1, col2, col3 = st.columns(3)
@@ -200,13 +205,14 @@ with col2:
     st.subheader("🔄 Refresh Data")
     if st.button("Load/Refresh Data", type="primary"):
         with st.spinner("Processing Excel files..."):
-            summary_df, files_df, error = process_bom_data(excel_directory)
+            summary_df, files_df, combined_df, error = process_bom_data(excel_directory)
             
             if error:
                 st.error(error)
             else:
                 st.session_state['summary_data'] = summary_df
                 st.session_state['files_data'] = files_df
+                st.session_state['combined_data'] = combined_df
                 st.session_state['raw_data'] = summary_df  # For filtering
                 st.session_state['last_refresh'] = time.time()
                 
@@ -233,15 +239,17 @@ if 'summary_data' not in st.session_state:
 
 summary_df = st.session_state['summary_data']
 files_df = st.session_state['files_data']
+combined_df = st.session_state['combined_data']
 
 # Auto-refresh logic
 if auto_refresh and 'last_refresh' in st.session_state:
     if time.time() - st.session_state['last_refresh'] > 30:
         with st.spinner("Auto-refreshing..."):
-            summary_df, files_df, error = process_bom_data(excel_directory)
+            summary_df, files_df, combined_df, error = process_bom_data(excel_directory)
             if not error:
                 st.session_state['summary_data'] = summary_df
                 st.session_state['files_data'] = files_df
+                st.session_state['combined_data'] = combined_df
                 st.session_state['raw_data'] = summary_df
                 st.session_state['last_refresh'] = time.time()
                 
@@ -387,6 +395,64 @@ with tab3:
         st.metric("Median Quantity", f"{summary_df['Units'].median():,.0f}")
     with col4:
         st.metric("Std Dev", f"{summary_df['Units'].std():,.0f}")
+
+# Project File Breakdown Table
+st.header("📁 Project File Breakdown")
+
+st.subheader("Units per Project File with Total")
+
+if combined_df is not None and len(combined_df) > 0:
+    # Create pivot table: Model/PN as rows, Source File as columns, Units as values
+    pivot_df = combined_df.pivot_table(
+        index='Model/PN',
+        columns='Source File',
+        values='Units',
+        aggfunc='sum',
+        fill_value=0
+    )
+    
+    # Add total column
+    pivot_df['Total'] = pivot_df.sum(axis=1)
+    
+    # Sort by total descending
+    pivot_df = pivot_df.sort_values('Total', ascending=False)
+    
+    # Add Networking description back to the pivot table
+    networking_map = combined_df.drop_duplicates('Model/PN').set_index('Model/PN')['Networking'].to_dict()
+    pivot_df.insert(0, 'Networking', pivot_df.index.map(networking_map))
+    
+    # Display the pivot table
+    st.dataframe(
+        pivot_df.style.format({col: '{:,.0f}' for col in pivot_df.columns if col != 'Networking'})
+        .background_gradient(cmap='YlOrRd', subset=[col for col in pivot_df.columns if col != 'Networking'])
+        .set_properties(**{'text-align': 'right'}),
+        use_container_width=True,
+        height=600
+    )
+    
+    # Show summary statistics for the pivot table
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Total Items in Matrix", len(pivot_df))
+    with col2:
+        st.metric("Total Project Files", len([col for col in pivot_df.columns if col != 'Networking' and col != 'Total']))
+    with col3:
+        st.metric("Grand Total", f"{pivot_df['Total'].sum():,.0f}")
+    
+    # Export option for the pivot table
+    if st.button("Export Project File Breakdown to Excel"):
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            pivot_df.to_excel(writer, sheet_name='Project Breakdown')
+        
+        st.download_button(
+            label="Download Project Breakdown Excel",
+            data=output.getvalue(),
+            file_name=f"Project_File_Breakdown_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+else:
+    st.info("No combined data available for project file breakdown")
 
 # Query Section
 st.header("🔍 Query Data")
