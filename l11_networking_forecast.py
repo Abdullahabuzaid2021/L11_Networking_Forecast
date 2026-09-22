@@ -47,11 +47,13 @@ containing PnL SN6600 tabs and provides interactive querying and export capabili
 st.sidebar.header("⚙️ Configuration")
 
 # Directory input
-default_dir = r"C:\Users\Abdullah_Abuzaid\OneDrive - Dell Technologies\Desktop\Hackathon exercise"
+# Use the data directory in the repo as default
+script_dir = Path(__file__).parent.resolve()
+default_dir = str(script_dir / "data")
 sharepoint_url = "https://dell.sharepoint.com/:f:/r/sites/NetworkingL11RackPlanning/Shared%20Documents/General/Hackathon%20-%20L11%20forecasting?d=wb9ae5c4571d84bec94d375ef7ea58856&csf=1&web=1&e=KNnpRl"
 
 excel_directory = st.sidebar.text_input("Excel Directory", default_dir)
-st.sidebar.caption("💡 For SharePoint access, sync the folder locally or use the mapped drive path")
+st.sidebar.caption("💡 Default uses data directory in repo. For SharePoint access, sync the folder locally or use the mapped drive path")
 
 # Auto-refresh option
 auto_refresh = st.sidebar.checkbox("Auto-refresh (30 seconds)", value=False)

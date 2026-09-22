@@ -48,3 +48,6 @@ Thumbs.db
 *.csv
 !example_*.xlsx
 !example_*.csv
+
+# Allow data directory with sample files
+!data/*.xlsx

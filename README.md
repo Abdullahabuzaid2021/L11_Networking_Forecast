@@ -113,10 +113,33 @@ streamlit run l11_networking_forecast.py
 
 ## Configuration
 
-- **Default Directory**: `C:\Users\Abdullah_Abuzaid\OneDrive - Dell Technologies\Desktop\Hackathon exercise`
+- **Default Directory**: `data/` (included in repository)
+- **Alternative Directory**: `C:\Users\Abdullah_Abuzaid\OneDrive - Dell Technologies\Desktop\Hackathon exercise`
 - **SharePoint Location**: [Hackathon - L11 forecasting](https://dell.sharepoint.com/:f:/r/sites/NetworkingL11RackPlanning/Shared%20Documents/General/Hackathon%20-%20L11%20forecasting?d=wb9ae5c4571d84bec94d375ef7ea58856&csf=1&web=1&e=KNnpRl)
 - **Supported File Format**: Excel files (.xlsx) with tabs containing "PnL SN6600" in the name
 - **Required Columns**: Networking, Model/PN, Units
+
+### Sample Data Included
+
+The repository includes sample Excel files in the `data/` directory:
+- `Horizon PNL.xlsx` - Sample Horizon project BOM data
+- `P&L -IREN - 50MW 252 Racks - Sweetwater VR NVL72_SN6600-LD_CORE.xlsx` - CORE project data
+- `P&L -IREN - 50MW 252 Racks - Sweetwater VR NVL72_SN6600-LD_DH.xlsx` - DH project data
+
+These files can be used immediately to test the dashboard functionality.
+
+### Data Directory Structure
+
+```
+L11_Networking_Forecast/
+├── data/
+│   ├── Horizon PNL.xlsx
+│   ├── P&L -IREN - 50MW 252 Racks - Sweetwater VR NVL72_SN6600-LD_CORE.xlsx
+│   └── P&L -IREN - 50MW 252 Racks - Sweetwater VR NVL72_SN6600-LD_DH.xlsx
+├── l11_networking_forecast.py
+├── requirements.txt
+└── README.md
+```
 
 ### SharePoint Integration
 
